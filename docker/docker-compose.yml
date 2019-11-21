@@ -1,0 +1,40 @@
+version: '3.4'
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+ bot-postgres-data:
+    driver: local
+    external: true
+
+services:
+
+  app:
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+          TOKEN: 947816503:AAHEls24wKULc_FTjM7hb_YwdzPgwCyT8po
+          CHAT_ID_FOR_NOTIFICATION: -362319713
+    networks:
+      - default
+    depends_on:
+      - db
+    volumes:
+      - "../:/var/www/app"
+      - "./conf/nginx:/etc/nginx/sites-available"
+  db:
+    image: postgres:9.6
+    networks:
+      - default
+    ports:
+      - "9432:5432"
+    environment:
+      POSTGRES_PASSWORD: 7f7AvS82PvJebYqk
+      POSTGRES_USER: absence_bot
+    volumes:
+      - bot-postgres-data:/var/lib/postgresql/data:delegated
